@@ -1,0 +1,4 @@
+Age_Group,Mean_Covid,Mean_Total,Mean_Pneumonia,Mean_Influenza,Mean_Pneumonia_Influenza,Mean_Pneumonia_Influenza_Covid
+0-17 years,8.58,671.165,15.095,2.635,17.73,24.055
+18-64 years,1380.565,15909.875,1354.845,32.07,1386.915,2028.135
+65 years and over,4368.01,46399.425,4525.755,77.825,4603.58,6847.715
