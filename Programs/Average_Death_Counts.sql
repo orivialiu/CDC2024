@@ -7,7 +7,7 @@ SELECT
   ROUND(AVG(Pneumonia_or_Influenza)) AS Mean_Pneumonia_Influenza,
   ROUND(AVG(Pneumonia_Influenza_or_COVID_19_Deaths)) AS Mean_Pneumonia_Influenza_Covid
 FROM
-  Health_Science_Dataset b
+  Health b
 WHERE
   b.Jurisdiction != 'United States'
   AND b.Jurisdiction NOT LIKE 'HHS%'
@@ -18,4 +18,5 @@ WHERE
   AND Pneumonia_Influenza_or_COVID_19_Deaths IS NOT NULL
   AND Pneumonia_or_Influenza IS NOT NULL
 GROUP BY
-  Jurisdiction;
+  b.Jurisdiction
+ORDER BY Jurisdiction;

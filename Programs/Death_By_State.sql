@@ -9,7 +9,7 @@ SELECT
   SUM(Coalesce(b.Pneumonia_or_Influenza, c.Mean_Pneumonia_Influenza)) Pneumonia_Influenza_Deaths,
   SUM(Coalesce(b.Pneumonia_Influenza_or_COVID_19_Deaths,c.Mean_Pneumonia_Influenza_Covid)) Pneumonia_Influenza_Covid
 From
-  Health_Science_Dataset b
+  Health b
   LEFT JOIN Average_Death_Counts c ON b.Jurisdiction = c.Jurisdiction
 WHERE
   b.Jurisdiction != 'United States' AND b.Jurisdiction NOT LIKE 'HHS%'
