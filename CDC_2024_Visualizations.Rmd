@@ -4,22 +4,710 @@ output:
   pdf_document: default
 date: "2024-09-28"
 ---
-
+Import Libraries
 ```{r setup, include=FALSE}
+#This code chunk is for modifying the global options and for loading required R packages
 knitr::opts_chunk$set(echo = TRUE)
+library(rmarkdown)
+library(tinytex)
+library(knitr)
+library(readr)
+library(mosaic) #Install Mosaic Package
+library(Stat2Data) #Install Stat2Data
+library(MASS) # You may need to install this package
 ```
 
-
-```{r cars}
-summary(cars)
+Read in Cleaned Data
+```{r}
+DT <- read_csv("Datasets/Death_And_Trips_Per_State.csv")
+head(DT)
 ```
 
-## Including Plots
+California Stats
+ 
+California Covid Deaths vs Local Travel
+```{r}
+CA = DT[DT$Jurisdiction == 'California',]
+head(CA)
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+model <- lm(CA$Local_Trips ~ CA$Covid_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of California Covid Deaths vs Local Travel")
+qqline(model$residuals)
+CA$CookD = cooks.distance(model)
+CAC <- CA[which(CA$CookD < 0.5),]
+bc <- boxcox(CAC$Local_Trips ~ CAC$Covid_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+CAC$Local_Trips1 <- (((CAC$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(CAC$Local_Trips1 ~ CAC$Covid_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(CAC$Local_Trips1 ~ CAC$Covid_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+California Influenza Deaths vs Local Travel
+```{r}
+model <- lm(CA$Local_Trips ~ CA$Influenza_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of California Influenza Deaths vs Local Travel")
+qqline(model$residuals)
+CA$CookD = cooks.distance(model)
+CAI <- CA[which(CA$CookD < 0.5),]
+bc <- boxcox(CAI$Local_Trips ~ CAI$Influenza_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+CAI$Local_Trips1 <- (((CAI$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(CAI$Local_Trips1 ~ CAI$Influenza_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(CAI$Local_Trips1 ~ CAI$Influenza_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+California Covid Deaths vs Interstate Travel
+```{r}
+model <- lm(CA$Interstate_Trips ~ CA$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Covid Deaths vs Inter Travel")
+qqline(model$residuals) 
+CA$CookD = cooks.distance(model) 
+CAC <- CA[which(CA$CookD < 0.5),]
+bc <- boxcox(CAC$Interstate_Trips ~ CAC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+CAC$Interstate_Trips1 <- (((CAC$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(CAC$Interstate_Trips1 ~ CAC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(CAC$Interstate_Trips1 ~ CAC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals) 
+```
+California Influenza Deaths vs Interstate Travel
+```{r}
+model <- lm(CA$Interstate_Trips ~ CA$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Influenza Deaths vs Inter Travel") 
+qqline(model$residuals) 
+CA$CookD = cooks.distance(model) 
+CAI <- CA[which(CA$CookD < 0.5),] 
+bc <- boxcox(CAI$Interstate_Trips ~ CAI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+CAI$Interstate_Trips1 <- (((CAI$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(CAI$Interstate_Trips1 ~ CAI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(CAI$Interstate_Trips1 ~ CAI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+California Covid Deaths vs Long Distance Trips
+```{r}
+model <- lm(CA$Long_Distance_Trips ~ CA$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Covid Deaths vs Long Travel")
+qqline(model$residuals) 
+CA$CookD = cooks.distance(model) 
+CAC <- CA[which(CA$CookD < 0.5),]
+bc <- boxcox(CAC$Long_Distance_Trips ~ CAC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+CAC$Long_Distance_Trips1 <- (((CAC$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(CAC$Long_Distance_Trips1 ~ CAC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(CAC$Long_Distance_Trips1 ~ CAC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals) 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+California Influenza Deaths vs Long Distance Trips
+```{r}
+model <- lm(CA$Long_Distance_Trips ~ CA$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Influenza Deaths vs Long Travel") 
+qqline(model$residuals) 
+CA$CookD = cooks.distance(model) 
+CAI <- CA[which(CA$CookD < 0.5),] 
+bc <- boxcox(CAI$Long_Distance_Trips ~ CAI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+CAI$Long_Distance_Trips1 <- (((CAI$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(CAI$Long_Distance_Trips1 ~ CAI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(CAI$Long_Distance_Trips1 ~ CAI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+North Carolina Stats
+ 
+North Carolina Covid Deaths vs Local Trips
+```{r}
+NC = DT[DT$Jurisdiction == 'North Carolina',]
+head(NC)
+
+model <- lm(NC$Local_Trips ~ NC$Covid_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Covid Deaths vs Local Travel")
+qqline(model$residuals)
+NC$CookD = cooks.distance(model)
+NCC <- NC[which(NC$CookD < 0.5),]
+bc <- boxcox(NCC$Local_Trips ~ NCC$Covid_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+NCC$Local_Trips1 <- (((NCC$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(NCC$Local_Trips1 ~ NCC$Covid_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(NCC$Local_Trips1 ~ NCC$Covid_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+
+North Carolina Influenza Deaths vs Local Trips
+```{r}
+model <- lm(NC$Local_Trips ~ NC$Influenza_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Influenza Deaths vs Local Travel")
+qqline(model$residuals)
+NC$CookD = cooks.distance(model)
+NCI <- NC[which(NC$CookD < 0.5),]
+bc <- boxcox(NCI$Local_Trips ~ NCI$Influenza_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+NCI$Local_Trips1 <- (((NCI$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(NCI$Local_Trips1 ~ NCI$Influenza_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(NCI$Local_Trips1 ~ NCI$Influenza_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+
+North Carolina Covid Deaths vs Interstate Trips
+```{r}
+model <- lm(NC$Interstate_Trips ~ NC$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Covid Deaths vs Interstate Travel")
+qqline(model$residuals) 
+NC$CookD = cooks.distance(model) 
+NCC <- NC[which(NC$CookD < 0.5),]
+bc <- boxcox(NCC$Interstate_Trips ~ NCC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+NCC$Interstate_Trips1 <- (((NCC$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(NCC$Interstate_Trips1 ~ NCC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(NCC$Interstate_Trips1 ~ NCC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals) 
+```
+
+North Carolina Influenza Deaths vs Interstate Trips
+```{r}
+model <- lm(NC$Interstate_Trips ~ NC$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Influenza Deaths vs Interstate Travel") 
+qqline(model$residuals) 
+NC$CookD = cooks.distance(model) 
+NCI <- NC[which(NC$CookD < 0.5),] 
+bc <- boxcox(NCI$Interstate_Trips ~ NCI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+NCI$Interstate_Trips1 <- (((NCI$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(NCI$Interstate_Trips1 ~ NCI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(NCI$Interstate_Trips1 ~ NCI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+North Carolina Covid Deaths vs Long Distance Trips
+```{r}
+model <- lm(NC$Long_Distance_Trips ~ NC$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Covid Deaths vs Long_Distance Travel")
+qqline(model$residuals) 
+NC$CookD = cooks.distance(model) 
+NCC <- NC[which(NC$CookD < 0.5),]
+bc <- boxcox(NCC$Long_Distance_Trips ~ NCC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+NCC$Long_Distance_Trips1 <- (((NCC$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(NCC$Long_Distance_Trips1 ~ NCC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(NCC$Long_Distance_Trips1 ~ NCC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals) 
+```
+
+North Carolina Influenza Deaths vs Long Distance Trips
+```{r}
+model <- lm(NC$Long_Distance_Trips ~ NC$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Influenza Deaths vs Long_Distance Travel") 
+qqline(model$residuals) 
+NC$CookD = cooks.distance(model) 
+NCI <- NC[which(NC$CookD < 0.5),] 
+bc <- boxcox(NCI$Long_Distance_Trips ~ NCI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+NCI$Long_Distance_Trips1 <- (((NCI$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(NCI$Long_Distance_Trips1 ~ NCI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(NCI$Long_Distance_Trips1 ~ NCI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+Georgia Stats
+
+Georgia Covid Deaths vs Local Trips
+```{r}
+GA = DT[DT$Jurisdiction == 'Georgia',]
+head(GA)
+
+model <- lm(GA$Local_Trips ~ GA$Covid_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Georgia Covid Deaths vs Local Travel")
+qqline(model$residuals)
+GA$CookD = cooks.distance(model)
+GAC <- GA[which(GA$CookD < 0.5),]
+bc <- boxcox(GAC$Local_Trips ~ GAC$Covid_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+GAC$Local_Trips1 <- (((GAC$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(GAC$Local_Trips1 ~ GAC$Covid_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(GAC$Local_Trips1 ~ GAC$Covid_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+
+Georgia Influenza Deaths vs Local Trips
+```{r}
+model <- lm(GA$Local_Trips ~ GA$Influenza_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Georgia Influenza Deaths vs Local Travel")
+qqline(model$residuals)
+GA$CookD = cooks.distance(model)
+GAI <- GA[which(GA$CookD < 0.5),]
+bc <- boxcox(GAI$Local_Trips ~ GAI$Influenza_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+GAI$Local_Trips1 <- ((GAI$Local_Trips^lambda - 1) / lambda)
+new_model <- lm(GAI$Local_Trips1 ~ GAI$Influenza_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(GAI$Local_Trips1 ~ GAI$Influenza_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+
+Georgia Covid Deaths vs Interstate Trips
+```{r}
+model <- lm(GA$Interstate_Trips ~ GA$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Georgia Covid Deaths vs Interstate Travel")
+qqline(model$residuals) 
+GA$CookD = cooks.distance(model) 
+GAC <- GA[which(GA$CookD < 0.5),]
+bc <- boxcox(GAC$Interstate_Trips ~ GAC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+GAC$Interstate_Trips1 <- (((GAC$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(GAC$Interstate_Trips1 ~ GAC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(GAC$Interstate_Trips1 ~ GAC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+Georgia Influenza Deaths vs Interstate Trips
+```{r}
+model <- lm(GA$Interstate_Trips ~ GA$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Georgia Influenza Deaths vs Interstate Travel") 
+qqline(model$residuals) 
+GA$CookD = cooks.distance(model) 
+GAI <- GA[which(GA$CookD < 0.5),] 
+bc <- boxcox(GAI$Interstate_Trips ~ GAI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+GAI$Interstate_Trips1 <- (((GAI$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(GAI$Interstate_Trips1 ~ GAI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(GAI$Interstate_Trips1 ~ GAI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+Georgia Covid Deaths vs Long Distance Trips
+```{r}
+model <- lm(GA$Long_Distance_Trips ~ GA$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Georgia Covid Deaths vs Long_Distance Travel")
+qqline(model$residuals) 
+GA$CookD = cooks.distance(model) 
+GAC <- GA[which(GA$CookD < 0.5),]
+bc <- boxcox(GAC$Long_Distance_Trips ~ GAC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+GAC$Long_Distance_Trips1 <- (((GAC$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(GAC$Long_Distance_Trips1 ~ GAC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(GAC$Long_Distance_Trips1 ~ GAC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+Georgia Influenza Deaths vs Long Distance Trips
+```{r}
+model <- lm(GA$Long_Distance_Trips ~ GA$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Georgia Influenza Deaths vs Long_Distance Travel") 
+qqline(model$residuals) 
+GA$CookD = cooks.distance(model) 
+GAI <- GA[which(GA$CookD < 0.5),] 
+bc <- boxcox(GAI$Long_Distance_Trips ~ GAI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+GAI$Long_Distance_Trips1 <- (((GAI$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(GAI$Long_Distance_Trips1 ~ GAI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(GAI$Long_Distance_Trips1 ~ GAI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+New York Stats
+
+New York Covid Deaths vs Local Trips
+```{r}
+NY = DT[DT$Jurisdiction == 'New York',]
+head(NY)
+
+model <- lm(NY$Local_Trips ~ NY$Covid_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of New York Covid Deaths vs Local Travel")
+qqline(model$residuals)
+NY$CookD = cooks.distance(model)
+NYC <- NY[which(NY$CookD < 0.5),]
+bc <- boxcox(NYC$Local_Trips ~ NYC$Covid_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+NYC$Local_Trips1 <- (((NYC$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(NYC$Local_Trips1 ~ NYC$Covid_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(NYC$Local_Trips1 ~ NYC$Covid_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+
+New York Influenza Deaths vs Local Trips
+```{r}
+model <- lm(NY$Local_Trips ~ NY$Influenza_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of New York Influenza Deaths vs Local Travel")
+qqline(model$residuals)
+NY$CookD = cooks.distance(model)
+NYI <- NY[which(NY$CookD < 0.5),]
+bc <- boxcox(NYI$Local_Trips ~ NYI$Influenza_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+NYI$Local_Trips1 <- (((NYI$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(NYI$Local_Trips1 ~ NYI$Influenza_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(NYI$Local_Trips1 ~ NYI$Influenza_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+
+New York Covid Deaths vs Interstate Trips
+```{r}
+model <- lm(NY$Interstate_Trips ~ NY$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of New York Covid Deaths vs Interstate Travel")
+qqline(model$residuals) 
+NY$CookD = cooks.distance(model) 
+NYC <- NY[which(NY$CookD < 0.5),]
+bc <- boxcox(NYC$Interstate_Trips ~ NYC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+NYC$Interstate_Trips1 <- (((NYC$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(NYC$Interstate_Trips1 ~ NYC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(NYC$Interstate_Trips1 ~ NYC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+New York Influenza Deaths vs Interstate Trips
+```{r}
+model <- lm(NY$Interstate_Trips ~ NY$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of New York Influenza Deaths vs Interstate Travel") 
+qqline(model$residuals) 
+NY$CookD = cooks.distance(model) 
+NYI <- NY[which(NY$CookD < 0.5),] 
+bc <- boxcox(NYI$Interstate_Trips ~ NYI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+NYI$Interstate_Trips1 <- (((NYI$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(NYI$Interstate_Trips1 ~ NYI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(NYI$Interstate_Trips1 ~ NYI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+New York Covid Deaths vs Long Distance Trips
+```{r}
+model <- lm(NY$Long_Distance_Trips ~ NY$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of New York Covid Deaths vs Long_Distance Travel")
+qqline(model$residuals) 
+NY$CookD = cooks.distance(model) 
+NYC <- NY[which(NY$CookD < 0.5),]
+bc <- boxcox(NYC$Long_Distance_Trips ~ NYC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+NYC$Long_Distance_Trips1 <- (((NYC$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(NYC$Long_Distance_Trips1 ~ NYC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(NYC$Long_Distance_Trips1 ~ NYC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+New York Influenza Deaths vs Long Distance Trips
+```{r}
+model <- lm(NY$Long_Distance_Trips ~ NY$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of New York Influenza Deaths vs Long_Distance Travel") 
+qqline(model$residuals) 
+NY$CookD = cooks.distance(model) 
+NYI <- NY[which(NY$CookD < 0.5),] 
+bc <- boxcox(NYI$Long_Distance_Trips ~ NYI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+NYI$Long_Distance_Trips1 <- (((NYI$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(NYI$Long_Distance_Trips1 ~ NYI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(NYI$Long_Distance_Trips1 ~ NYI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+Wyoming Stats
+
+Wyoming Covid Deaths vs Local Trips
+```{r}
+WY = DT[DT$Jurisdiction == 'Wyoming',]
+head(WY)
+
+model <- lm(WY$Local_Trips ~ WY$Covid_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Wyoming Covid Deaths vs Local Travel")
+qqline(model$residuals)
+WY$CookD = cooks.distance(model)
+WYC <- WY[which(WY$CookD < 0.5),]
+bc <- boxcox(WYC$Local_Trips ~ WYC$Covid_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+WYC$Local_Trips1 <- (((WYC$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(WYC$Local_Trips1 ~ WYC$Covid_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(WYC$Local_Trips1 ~ WYC$Covid_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+
+Wyoming Covid Deaths vs Interstate Trips
+```{r}
+model <- lm(WY$Interstate_Trips ~ WY$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Wyoming Covid Deaths vs Interstate Travel")
+qqline(model$residuals) 
+WY$CookD = cooks.distance(model) 
+WYC <- WY[which(WY$CookD < 0.5),]
+bc <- boxcox(WYC$Interstate_Trips ~ WYC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+WYC$Interstate_Trips1 <- (((WYC$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(WYC$Interstate_Trips1 ~ WYC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(WYC$Interstate_Trips1 ~ WYC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals) 
+```
+
+Wyoming Covid Deaths vs Long Distance Trips
+```{r}
+model <- lm(WY$Long_Distance_Trips ~ WY$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Wyoming Covid Deaths vs Long_Distance Travel")
+qqline(model$residuals) 
+WY$CookD = cooks.distance(model) 
+WYC <- WY[which(WY$CookD < 0.5),]
+bc <- boxcox(WYC$Long_Distance_Trips ~ WYC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+WYC$Long_Distance_Trips1 <- (((WYC$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(WYC$Long_Distance_Trips1 ~ WYC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(WYC$Long_Distance_Trips1 ~ WYC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals) 
+```
+
+Wyoming had no Influenza Deaths
+
+Florida Stats
+
+Florida Covid Deaths vs Local Trips
+```{r}
+FL = DT[DT$Jurisdiction == 'Florida',]
+head(FL)
+
+model <- lm(FL$Local_Trips ~ FL$Covid_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Florida Covid Deaths vs Local Travel")
+qqline(model$residuals)
+FL$CookD = cooks.distance(model)
+FLC <- FL[which(FL$CookD < 0.5),]
+bc <- boxcox(FLC$Local_Trips ~ FLC$Covid_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+FLC$Local_Trips1 <- (((FLC$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(FLC$Local_Trips1 ~ FLC$Covid_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(FLC$Local_Trips1 ~ FLC$Covid_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+
+Florida Influenza Deaths vs Local Trips
+```{r}
+model <- lm(FL$Local_Trips ~ FL$Influenza_Deaths)
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Florida Influenza Deaths vs Local Travel")
+qqline(model$residuals)
+FL$CookD = cooks.distance(model)
+FLI <- NY[which(NY$CookD < 0.5),]
+bc <- boxcox(FLI$Local_Trips ~ FLI$Influenza_Deaths)
+lambda <- bc$x[which.max(bc$y)]
+FLI$Local_Trips1 <- (((FLI$Local_Trips)^lambda - 1) / lambda)
+new_model <- lm(FLI$Local_Trips1 ~ FLI$Influenza_Deaths)
+summary(new_model)
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+plot(FLI$Local_Trips1 ~ FLI$Influenza_Deaths)
+abline(new_model)
+conf_intervals <- confint(new_model, level = 0.95)
+print(conf_intervals)
+```
+
+Florida Covid Deaths vs Interstate Trips
+```{r}
+model <- lm(FL$Interstate_Trips ~ FL$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Florida Covid Deaths vs Interstate Travel")
+qqline(model$residuals) 
+FL$CookD = cooks.distance(model) 
+FLC <- FL[which(FL$CookD < 0.5),]
+bc <- boxcox(FLC$Interstate_Trips ~ FLC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+FLC$Interstate_Trips1 <- (((FLC$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(FLC$Interstate_Trips1 ~ FLC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(FLC$Interstate_Trips1 ~ FLC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals) 
+```
+
+Florida Influenza Deaths vs Interstate Trips
+```{r}
+model <- lm(FL$Interstate_Trips ~ FL$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Florida Influenza Deaths vs Interstate Travel") 
+qqline(model$residuals) 
+FL$CookD = cooks.distance(model) 
+FLI <- FL[which(FL$CookD < 0.5),] 
+bc <- boxcox(FLI$Interstate_Trips ~ FLI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+FLI$Interstate_Trips1 <- (((FLI$Interstate_Trips)^lambda - 1) / lambda) 
+new_model <- lm(FLI$Interstate_Trips1 ~ FLI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(FLI$Interstate_Trips1 ~ FLI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
+Florida Covid Deaths vs Long Distance Trips
+```{r}
+model <- lm(FL$Long_Distance_Trips ~ FL$Covid_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Florida Covid Deaths vs Long_Distance Travel")
+qqline(model$residuals) 
+FL$CookD = cooks.distance(model) 
+FLC <- FL[which(FL$CookD < 0.5),]
+bc <- boxcox(FLC$Long_Distance_Trips ~ FLC$Covid_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+FLC$Long_Distance_Trips1 <- (((FLC$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(FLC$Long_Distance_Trips1 ~ FLC$Covid_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(FLC$Long_Distance_Trips1 ~ FLC$Covid_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals) 
+```
+
+Florida Influenza Deaths vs Long Distance Trips
+```{r}
+model <- lm(FL$Long_Distance_Trips ~ FL$Influenza_Deaths) 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Florida Influenza Deaths vs Long_Distance Travel") 
+qqline(model$residuals) 
+FL$CookD = cooks.distance(model) 
+FLI <- FL[which(FL$CookD < 0.5),] 
+bc <- boxcox(FLI$Long_Distance_Trips ~ FLI$Influenza_Deaths) 
+lambda <- bc$x[which.max(bc$y)] 
+FLI$Long_Distance_Trips1 <- (((FLI$Long_Distance_Trips)^lambda - 1) / lambda) 
+new_model <- lm(FLI$Long_Distance_Trips1 ~ FLI$Influenza_Deaths) 
+summary(new_model) 
+qqnorm(new_model$residuals) 
+qqline(new_model$residuals) 
+plot(FLI$Long_Distance_Trips1 ~ FLI$Influenza_Deaths) 
+abline(new_model) 
+conf_intervals <- confint(new_model, level = 0.95) 
+print(conf_intervals)
+```
+
