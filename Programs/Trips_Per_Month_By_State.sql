@@ -1,7 +1,13 @@
 SELECT
   YEAR (Date) AS Year,
   MONTH (Date) AS Month,
-  State_Postal_Code,
+  REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+    State_Postal_Code, 'NC', 'North Carolina'), 
+    'GA', 'Georgia'), 
+    'NY', 'New York'), 
+    'CA', 'California'), 
+    'WY', 'Wyoming'), 
+    'FL', 'Florida') AS State_Postal_Code,
   SUM(
   	CAST(Number_of_Trips_1 AS numeric) + 
   	CAST(Number_of_Trips_1_3 AS numeric) + 
@@ -19,7 +25,7 @@ SELECT
     CAST(Number_of_Trips_500 AS numeric)
     ) AS Long_Distance_Trips
 FROM
-  State_Only_Trips_per_State
+  State_Only_Trips_Per_State
 WHERE
   YEAR (Date) >= 2019
   AND YEAR (Date) <= 2023
