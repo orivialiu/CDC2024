@@ -69,7 +69,7 @@ print(conf_intervals)
 California Covid Deaths vs Interstate Travel
 ```{r}
 model <- lm(CA$Interstate_Trips ~ CA$Covid_Deaths) 
-qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Covid Deaths vs Inter Travel")
+qqnorm(model$residuals, main = "Normal Q-Q Plot of California Covid Deaths vs Inter Travel")
 qqline(model$residuals) 
 CA$CookD = cooks.distance(model) 
 CAC <- CA[which(CA$CookD < 0.5),]
@@ -88,7 +88,7 @@ print(conf_intervals)
 California Influenza Deaths vs Interstate Travel
 ```{r}
 model <- lm(CA$Interstate_Trips ~ CA$Influenza_Deaths) 
-qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Influenza Deaths vs Inter Travel") 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of California Influenza Deaths vs Inter Travel") 
 qqline(model$residuals) 
 CA$CookD = cooks.distance(model) 
 CAI <- CA[which(CA$CookD < 0.5),] 
@@ -107,7 +107,7 @@ print(conf_intervals)
 California Covid Deaths vs Long Distance Trips
 ```{r}
 model <- lm(CA$Long_Distance_Trips ~ CA$Covid_Deaths) 
-qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Covid Deaths vs Long Travel")
+qqnorm(model$residuals, main = "Normal Q-Q Plot of California Covid Deaths vs Long Travel")
 qqline(model$residuals) 
 CA$CookD = cooks.distance(model) 
 CAC <- CA[which(CA$CookD < 0.5),]
@@ -127,7 +127,7 @@ print(conf_intervals)
 California Influenza Deaths vs Long Distance Trips
 ```{r}
 model <- lm(CA$Long_Distance_Trips ~ CA$Influenza_Deaths) 
-qqnorm(model$residuals, main = "Normal Q-Q Plot of North Carolina Influenza Deaths vs Long Travel") 
+qqnorm(model$residuals, main = "Normal Q-Q Plot of California Influenza Deaths vs Long Travel") 
 qqline(model$residuals) 
 CA$CookD = cooks.distance(model) 
 CAI <- CA[which(CA$CookD < 0.5),] 
